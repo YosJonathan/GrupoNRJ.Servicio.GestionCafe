@@ -1,0 +1,6 @@
+@GrupoNRJ.Servicio.GestionCafe_HostAddress = http://localhost:5102
+
+GET {{GrupoNRJ.Servicio.GestionCafe_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
