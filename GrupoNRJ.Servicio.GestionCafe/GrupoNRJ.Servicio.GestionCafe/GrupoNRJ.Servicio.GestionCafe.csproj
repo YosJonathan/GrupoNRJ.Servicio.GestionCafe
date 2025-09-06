@@ -7,7 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GrupoNRJ.Modelos.GestionCafe">
+      <HintPath>..\..\..\GrupoNRJ.Modelos.GestionCafe\GrupoNRJ.Modelos.GestionCafe\bin\Debug\net8.0\GrupoNRJ.Modelos.GestionCafe.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

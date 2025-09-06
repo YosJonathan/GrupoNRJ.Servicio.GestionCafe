@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GrupoNRJ.Modelos.GestionCafe;
+using GrupoNRJ.Modelos.GestionCafe.Respuestas;
+using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
+using GrupoNRJ.Servicio.GestionCafe.Singleton;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GrupoNRJ.Servicio.GestionCafe.Controllers
 {
@@ -6,25 +10,58 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     [Route("api/[controller]")]
     public class InventarioController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Obtener()
+        private readonly IConfiguration _configuration;
+        public InventarioController(IConfiguration configuration)
         {
-            var inventario = GestorDeInventario.Instancia.ObtenerInventario();
-            return Ok(inventario);
+            this._configuration = configuration;
         }
 
-        [HttpPost("agregar")]
-        public IActionResult AgregarProducto(int idProducto, int cantidad)
+        [HttpPost("agregarProducto")]
+        public IActionResult AgregarProducto(AgregarProductoSolicitud solicitud)
         {
-            GestorDeInventario.Instancia.AgregarProducto(idProducto, cantidad);
-            return Ok($"Se agregaron {cantidad} unidades del producto {idProducto}");
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            AgregarProductoRespuesta respuesta = gestor.AgregarProducto(solicitud);
+            return Ok(respuesta);
         }
 
-        [HttpPost("retirar")]
-        public IActionResult RetirarProducto(int idProducto, int cantidad)
+        [HttpPost("eliminarProducto")]
+        public IActionResult EliminarProducto(EliminarProductoSolicitud solicitud)
         {
-            GestorDeInventario.Instancia.RetirarProducto(idProducto, cantidad);
-            return Ok($"Se retiraron {cantidad} unidades del producto {idProducto}");
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            EliminarProductoRespuesta respuesta = gestor.EliminarProducto(solicitud);
+            return Ok(respuesta);
+        }
+
+        [HttpPost("inventario")]
+        public IActionResult ConsultarInvetario()
+        {
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            RespuestaBase<List<ProductoRespuesta>> resultado = gestor.ConsultarInventario();
+            return Ok(resultado);
+        }
+
+        [HttpPost("ModificarProducto")]
+        public IActionResult ModificarProducto(ModificarProductoSolicitud solicitud)
+        {
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            ModificarProductoRespuesta resultado = gestor.ModificarProducto(solicitud);
+            return Ok(resultado);
+        }
+
+        [HttpPost("ConsultarMovimientos")]
+        public IActionResult ConsultarMovimientosProducto(ConsultarMovimientosProductoSolicitud solicitud)
+        {
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            RespuestaBase<List<ConsultarMovimientosProductoRespuesta>> resultado = gestor.ConsultarMovimientosProducto(solicitud);
+            return Ok(resultado);
+        }
+
+        [HttpPost("IngresarMovimiento")]
+        public IActionResult IngresarMovimiento(AgregarMovimientoSolicitud solicitud)
+        {
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            AgregarMovimientoRespuesta resultado = gestor.AgregarMovimiento(solicitud);
+            return Ok(resultado);
         }
     }
 }
