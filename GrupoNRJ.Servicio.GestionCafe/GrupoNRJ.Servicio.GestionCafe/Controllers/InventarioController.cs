@@ -63,5 +63,14 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             AgregarMovimientoRespuesta resultado = gestor.AgregarMovimiento(solicitud);
             return Ok(resultado);
         }
+
+        [HttpPost("ObtenerAlertas")]
+        public IActionResult ObtenerAlertas()
+        {
+            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new ();
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            respuesta = gestor.ObtenerAlertas();
+            return this.Ok(respuesta);
+        }
     }
 }

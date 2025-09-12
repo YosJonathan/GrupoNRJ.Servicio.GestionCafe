@@ -58,6 +58,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
+                respuesta.Mensaje = ex.ToString();
                 Bitacoras.GuardarError(ex.ToString(), solicitud);
             }
 
@@ -141,6 +142,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             catch (Exception ex)
             {
                 Bitacoras.GuardarError(ex.ToString(), new { });
+                respuesta.Mensaje = ex.ToString();
+                respuesta.Codigo = 999;
             }
             return respuesta;
         }
@@ -221,6 +224,72 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         public Dictionary<int, int> ObtenerInventario()
         {
             return _inventario;
+        }
+
+        internal RespuestaBase<List<ObtenerAlertasRespuesta>> ObtenerAlertas()
+        {
+            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new ();
+            try
+            {
+                DataTable resultado = new DataTable();
+                Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+                using var _ = resultado = ejecutarSP.ExecuteStoredProcedure("SP_ObtenerAlertas", parametros);
+                if (resultado != null)
+                {
+                    List<ObtenerAlertasRespuesta> lista = new();
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        lista.Add(new ObtenerAlertasRespuesta
+                        {
+                            AlertaStock = int.Parse(dr["AlertaEnStock"].ToString() ?? "")==1,
+                            NombreProducto = dr["NombreProducto"].ToString() ?? string.Empty,
+                            CantidadMinima = double.Parse(dr["CantidadMinima"].ToString() ?? "0"),
+                            Existencias = double.Parse(dr["existencias"].ToString() ?? "0")
+                        });
+                    }
+                    respuesta.Datos = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.ToString();
+                respuesta.Codigo = 999;
+                Bitacoras.GuardarError(ex.ToString(), new { });
+            }
+            return respuesta;
+        }
+
+        internal RespuestaBase<List<GranosRespuesta>> ObtenerGranos()
+        {
+            RespuestaBase<List<GranosRespuesta>> respuesta = new();
+            try
+            {
+                DataTable resultado = new DataTable();
+                Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+                using var _ = resultado = ejecutarSP.ExecuteStoredProcedure("SP_ObtenerGranos", parametros);
+                if (resultado != null)
+                {
+                    List<GranosRespuesta> lista = new();
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        lista.Add(new GranosRespuesta
+                        {
+                            IdGranos = int.Parse(dr["GranoID"].ToString() ?? "0"),
+                            Nombre = dr["Tipo"].ToString() ??string.Empty,
+                        });
+                    }
+                    respuesta.Datos = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+                Bitacoras.GuardarError(ex.ToString(), new { });
+            }
+            return respuesta;
         }
     }
 
