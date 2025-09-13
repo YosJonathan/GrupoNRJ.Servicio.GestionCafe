@@ -183,6 +183,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             catch (Exception ex)
             {
                 Bitacoras.GuardarError(ex.ToString(), new { });
+                respuesta.Mensaje = ex.ToString();
+                respuesta.Codigo = 999;
             }
             return respuesta;
         }
