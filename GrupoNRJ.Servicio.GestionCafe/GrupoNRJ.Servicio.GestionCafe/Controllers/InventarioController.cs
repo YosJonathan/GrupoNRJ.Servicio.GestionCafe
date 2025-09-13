@@ -72,5 +72,13 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             respuesta = gestor.ObtenerAlertas();
             return this.Ok(respuesta);
         }
+
+        [HttpPost("ObtenerInfoProducto")]
+        public IActionResult ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
+        {
+            var gestor = GestorDeInventario.GetInstance(_configuration);
+            RespuestaBase<ObtenerInfoProductoRespuesta> resultado = gestor.ObtenerInfoProducto(solicitud);
+            return Ok(resultado);
+        }
     }
 }

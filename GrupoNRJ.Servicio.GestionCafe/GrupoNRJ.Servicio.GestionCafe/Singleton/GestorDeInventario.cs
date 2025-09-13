@@ -81,7 +81,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                 };
 
                 respuesta.RegistroModificadoExitosamente = ejecutarSP.ExecuteNonQuery("SP_ModificarProducto", parametros);
-                respuesta.Mensaje = respuesta.RegistroModificadoExitosamente ? "Registro ingresado exitosamente" : "Ocurrio un error";
+                respuesta.Mensaje = respuesta.RegistroModificadoExitosamente ? "Registro modificado exitosamente" : "Ocurrio un error";
             }
             catch (Exception ex)
             {
@@ -190,7 +190,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         {
             AgregarMovimientoRespuesta respuesta = new AgregarMovimientoRespuesta();
             try
-            {  
+            {
                 DataTable resultado = new DataTable();
                 Dictionary<string, object> parametros = new Dictionary<string, object>();
                 parametros = new Dictionary<string, object>
@@ -202,15 +202,15 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
 
                 resultado = ejecutarSP.ExecuteStoredProcedure("SP_MovimientoProducto", parametros);
 
-                if (resultado !=null)
+                if (resultado != null)
                 {
                     DataRow dr = resultado.Rows[0];
-                    respuesta.Codigo = int.Parse(dr["Codigo"].ToString()??"0");
-                    respuesta.Mensaje = dr["Mensaje"].ToString()??string.Empty;
-                
+                    respuesta.Codigo = int.Parse(dr["Codigo"].ToString() ?? "0");
+                    respuesta.Mensaje = dr["Mensaje"].ToString() ?? string.Empty;
+
                 }
 
-                respuesta.Mensaje = respuesta.Codigo == 0 ? "Ocurrio un error inesperado": respuesta.Mensaje;
+                respuesta.Mensaje = respuesta.Codigo == 0 ? "Ocurrio un error inesperado" : respuesta.Mensaje;
             }
             catch (Exception ex)
             {
@@ -228,7 +228,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
 
         internal RespuestaBase<List<ObtenerAlertasRespuesta>> ObtenerAlertas()
         {
-            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new ();
+            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
             try
             {
                 DataTable resultado = new DataTable();
@@ -242,7 +242,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                     {
                         lista.Add(new ObtenerAlertasRespuesta
                         {
-                            AlertaStock = int.Parse(dr["AlertaEnStock"].ToString() ?? "")==1,
+                            AlertaStock = int.Parse(dr["AlertaEnStock"].ToString() ?? "") == 1,
                             NombreProducto = dr["NombreProducto"].ToString() ?? string.Empty,
                             CantidadMinima = double.Parse(dr["CantidadMinima"].ToString() ?? "0"),
                             Existencias = double.Parse(dr["existencias"].ToString() ?? "0")
@@ -277,7 +277,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         lista.Add(new GranosRespuesta
                         {
                             IdGranos = int.Parse(dr["GranoID"].ToString() ?? "0"),
-                            Nombre = dr["Tipo"].ToString() ??string.Empty,
+                            Nombre = dr["Tipo"].ToString() ?? string.Empty,
                         });
                     }
                     respuesta.Datos = lista;
@@ -288,6 +288,38 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                 respuesta.Codigo = 999;
                 respuesta.Mensaje = ex.ToString();
                 Bitacoras.GuardarError(ex.ToString(), new { });
+            }
+            return respuesta;
+        }
+
+        internal RespuestaBase<ObtenerInfoProductoRespuesta> ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
+        {
+            RespuestaBase<ObtenerInfoProductoRespuesta> respuesta = new();
+            try
+            {
+                DataTable resultado = new DataTable();
+                Dictionary<string, object> parametros = new Dictionary<string, object>();
+                parametros = new Dictionary<string, object>
+                {
+                    {"IdProducto", solicitud.IdProducto },
+                };
+                using var _ = resultado = ejecutarSP.ExecuteStoredProcedure("SP_ObtenerInfoProductos", parametros);
+                if (resultado != null)
+                {
+                    ObtenerInfoProductoRespuesta infoProducto = new();
+                    DataRow dr = resultado.Rows[0];
+
+                    infoProducto.GranoId = int.Parse(string.IsNullOrEmpty(dr["GranoID"].ToString()) ?"0":dr["GranoID"].ToString());
+                    infoProducto.IdProducto = int.Parse(dr["ProductoID"].ToString() ?? "0");
+                    infoProducto.ValorMinimo = double.Parse(dr["CantidadMinima"].ToString() ?? "0");
+                    infoProducto.Nombre = dr["NombreProducto"].ToString() ?? string.Empty;
+                    respuesta.Datos = infoProducto;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
             }
             return respuesta;
         }
