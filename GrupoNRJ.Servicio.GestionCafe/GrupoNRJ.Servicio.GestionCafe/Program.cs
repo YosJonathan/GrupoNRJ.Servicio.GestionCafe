@@ -1,4 +1,5 @@
 using GrupoNRJ.Servicio.GestionCafe;
+using GrupoNRJ.Servicio.GestionCafe.Composite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<EjecutarSP>();
+//Para COMPOSITE
+builder.Services.AddScoped<ProcesoService>();
 var app = builder.Build();
 
 app.UseStaticFiles();
