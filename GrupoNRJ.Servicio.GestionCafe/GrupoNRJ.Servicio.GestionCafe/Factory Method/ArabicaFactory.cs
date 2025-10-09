@@ -12,10 +12,12 @@ namespace GrupoNRJ.Servicio.GestionCafe.Factory_Method
     public class ArabicaFactory : IProductoFactory
     {
         private readonly EjecutarSP ejecutarSP;
+        private readonly Bitacoras bitacora;
 
-        public ArabicaFactory(EjecutarSP ejecutarSP)
+        public ArabicaFactory(EjecutarSP ejecutarSP, Bitacoras bitacora)
         {
             this.ejecutarSP = ejecutarSP;
+            this.bitacora = bitacora;
         }
 
         public AgregarProductoRespuesta AgregarProducto(AgregarProductoSolicitud solicitud)
@@ -29,9 +31,9 @@ namespace GrupoNRJ.Servicio.GestionCafe.Factory_Method
                 {
                     { "Nombre", solicitud.Nombre },
                     { "Cantidad", solicitud.Cantidad },
-                    { "GranoId", solicitud.IdGrano },
                     { "ValorMinimo", solicitud.ValorMinimo },
-                    { "NivelTostado", solicitud.NivelTostado }
+                    { "TipoProducto", solicitud.TipoProducto },
+                    {"GranoId", solicitud.IdGrano },
                 };
 
                 respuesta.RegistroIngresadoCorrectamente = this.ejecutarSP.ExecuteNonQuery("SP_GuardarProducto", parametros);
@@ -40,7 +42,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Factory_Method
             catch (Exception ex)
             {
                 respuesta.Mensaje = ex.ToString();
-                Bitacoras.GuardarError(ex.ToString(), solicitud);
+                this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
             return respuesta;

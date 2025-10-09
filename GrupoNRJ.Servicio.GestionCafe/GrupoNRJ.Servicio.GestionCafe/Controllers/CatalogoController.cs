@@ -29,11 +29,19 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
-        [HttpPost("obtenerNivelTostado")]
-        public IActionResult ObtenerNivelTostado()
+        [HttpPost("obtenerTipoProducto")]
+        public IActionResult ObtenerTipoProducto()
         {
             var gestor = GestorDeInventario.GetInstance(this.configuration);
-            RespuestaBase<List<NivelTostadoRespuesta>> respuesta = gestor.ObtenerNivelTostado();
+            RespuestaBase<List<TipoProductoResponse>> respuesta = gestor.ObtenerTipoProducto();
+            return this.Ok(respuesta);
+        }
+
+        [HttpPost("obtenerCatalogoCombo")]
+        public IActionResult obtenerCatalogoCombo()
+        {
+            var gestor = GestorDeInventario.GetInstance(this.configuration);
+            RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = gestor.ObtenerCatalogoCombo();
             return this.Ok(respuesta);
         }
     }

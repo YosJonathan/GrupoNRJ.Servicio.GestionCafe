@@ -1,17 +1,29 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
+﻿// <copyright file="EjecutarSP.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
 
 namespace GrupoNRJ.Servicio.GestionCafe
 {
+    using System.Data;
+    using Microsoft.Data.SqlClient;
+
     public class EjecutarSP
     {
         private readonly string _connectionString;
 
-        public EjecutarSP(IConfiguration configuration)
+        public EjecutarSP(IConfiguration configuration, bool bitacora = false)
         {
             // Lee la cadena de conexión desde appsettings.json
-            _connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string not found.");
+            if (bitacora)
+            {
+                _connectionString = configuration.GetConnectionString("Configuracion")
+                    ?? throw new InvalidOperationException("Connection string not found.");
+            }
+            else
+            {
+                _connectionString = configuration.GetConnectionString("DefaultConnection")
+                    ?? throw new InvalidOperationException("Connection string not found.");
+            }
         }
 
         /// <summary>
@@ -47,30 +59,22 @@ namespace GrupoNRJ.Servicio.GestionCafe
         /// </summary>
         public bool ExecuteNonQuery(string storedProcedure, Dictionary<string, object>? parameters = null)
         {
-            try
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+                command.CommandType = CommandType.StoredProcedure;
+
+                if (parameters != null)
                 {
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    if (parameters != null)
+                    foreach (var param in parameters)
                     {
-                        foreach (var param in parameters)
-                        {
-                            command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
-                        }
+                        command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
                     }
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    return true; // ✅ Se ejecutó correctamente
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al ejecutar el SP '{storedProcedure}': {ex.Message}");
-                return false; // ❌ Falló la ejecución
+
+                connection.Open();
+                command.ExecuteNonQuery();
+                return true; // ✅ Se ejecutó correctamente
             }
         }
     }

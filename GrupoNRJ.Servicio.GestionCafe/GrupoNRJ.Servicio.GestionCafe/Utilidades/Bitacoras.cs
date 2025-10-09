@@ -1,10 +1,22 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text.Json;
+﻿// <copyright file="Bitacoras.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
 
 namespace GrupoNRJ.Servicio.GestionCafe.Utilidades
 {
+    using System.Data;
+    using System.Runtime.CompilerServices;
+    using System.Text.Json;
+    using Microsoft.Extensions.Configuration;
+
     public class Bitacoras
     {
+        private readonly EjecutarSP ejecutarSP;
+
+        public Bitacoras(IConfiguration configuration)
+        {
+            this.ejecutarSP = new EjecutarSP(configuration, true);
+        }
 
         /// <summary>
         /// Convierte un objeto genérico a JSON con formato.
@@ -34,12 +46,24 @@ namespace GrupoNRJ.Servicio.GestionCafe.Utilidades
         /// <param name="mensaje">Mensaje de error</param>
         /// <param name="modelos">Modelo.</param>
         /// <param name="nombreMetodo">Nombre del método que llamó (se obtiene automáticamente si no se pasa)</param>
-        public static void GuardarError<T>(string mensaje, T modelos,
+        public void GuardarError<T>(string mensaje, T modelos,
             [CallerMemberName] string nombreMetodo = "")
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Metodo: {nombreMetodo} - Excepción: {mensaje} - Parametros: {modelos}");
-            Console.ResetColor();
+            string cadena = $"Metodo: {nombreMetodo} - Excepción: {mensaje} - Parametros: {modelos}";
+            try
+            {
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = new();
+                parametros = new Dictionary<string, object>
+                {
+                    { "Descripcion", cadena }
+                };
+
+                this.ejecutarSP.ExecuteNonQuery("SP_AgregarError", parametros);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         private static GestorDeInventario? instancia;
         private static readonly object mlock = new();
         private readonly EjecutarSP ejecutarSP;
+        private readonly Bitacoras bitacora;
         private readonly Dictionary<int, int> inventario;
 
         // 🔒 Constructor privado
@@ -23,6 +24,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         {
             this.inventario = new Dictionary<int, int>();
             this.ejecutarSP = new EjecutarSP(configuration);
+            this.bitacora = new Bitacoras(configuration);
         }
 
         // 🔑 Acceso Singleton
@@ -47,13 +49,13 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             switch (solicitud.Grano)
             {
                 case "Arábica":
-                    factory = new ArabicaFactory(this.ejecutarSP);
+                    factory = new ArabicaFactory(this.ejecutarSP, this.bitacora);
                     break;
                 case "Robusta":
-                    factory = new RobustaFactory(this.ejecutarSP);
+                    factory = new RobustaFactory(this.ejecutarSP, this.bitacora);
                     break;
                 case "Blend Especial":
-                    factory = new BlendEspecialFactory(this.ejecutarSP);
+                    factory = new BlendEspecialFactory(this.ejecutarSP, this.bitacora);
                     break;
                 default:
                     respuesta.Mensaje = "Grano no reconocido";
@@ -78,7 +80,6 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                     { "IdProducto", solicitud.IdProducto },
                     { "GranoId", solicitud.GranoId },
                     { "ValorMinimo", solicitud.ValorMinimo },
-                    { "Tostado", solicitud.NivelTostado },
                 };
 
                 respuesta.RegistroModificadoExitosamente = this.ejecutarSP.ExecuteNonQuery("SP_ModificarProducto", parametros);
@@ -86,7 +87,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
-                Bitacoras.GuardarError(ex.ToString(), solicitud);
+                this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
             return respuesta;
@@ -109,7 +110,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
-                Bitacoras.GuardarError(ex.ToString(), solicitud);
+                this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
             return respuesta;
@@ -135,7 +136,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                             Nombre = dr["NombreProducto"].ToString() ?? string.Empty,
                             Cantidad = double.Parse(dr["Cantidad"].ToString() ?? "0"),
                             Grano = dr["Grano"].ToString() ?? string.Empty,
-                            NivelTostado = dr["Nivel Tostado"].ToString() ?? string.Empty
+                            TipoProducto = dr["Tipo Producto"].ToString() ?? string.Empty,
                         };
                         lista.Add(registro);
                     }
@@ -145,7 +146,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
-                Bitacoras.GuardarError(ex.ToString(), new { });
+                this.bitacora.GuardarError(ex.ToString(), new { });
                 respuesta.Mensaje = ex.ToString();
                 respuesta.Codigo = 999;
             }
@@ -188,7 +189,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
-                Bitacoras.GuardarError(ex.ToString(), new { });
+                this.bitacora.GuardarError(ex.ToString(), new { });
                 respuesta.Mensaje = ex.ToString();
                 respuesta.Codigo = 999;
             }
@@ -223,7 +224,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
-                Bitacoras.GuardarError(ex.ToString(), solicitud);
+                this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
             return respuesta;
@@ -264,7 +265,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             {
                 respuesta.Mensaje = ex.ToString();
                 respuesta.Codigo = 999;
-                Bitacoras.GuardarError(ex.ToString(), new { });
+                this.bitacora.GuardarError(ex.ToString(), new { });
             }
 
             return respuesta;
@@ -298,7 +299,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             {
                 respuesta.Codigo = 999;
                 respuesta.Mensaje = ex.ToString();
-                Bitacoras.GuardarError(ex.ToString(), new { });
+                this.bitacora.GuardarError(ex.ToString(), new { });
             }
 
             return respuesta;
@@ -327,7 +328,6 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                     infoProducto.IdProducto = int.Parse(dr["ProductoID"].ToString() ?? "0");
                     infoProducto.ValorMinimo = double.Parse(dr["CantidadMinima"].ToString() ?? "0");
                     infoProducto.Nombre = dr["NombreProducto"].ToString() ?? string.Empty;
-                    infoProducto.NivelTostado = int.Parse(!string.IsNullOrEmpty(dr["IdNivelTostado"].ToString()) ? dr["IdNivelTostado"].ToString() : "0");
                     respuesta.Datos = infoProducto;
                 }
             }
@@ -340,23 +340,23 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
-        internal RespuestaBase<List<NivelTostadoRespuesta>> ObtenerNivelTostado()
+        internal RespuestaBase<List<TipoProductoResponse>> ObtenerTipoProducto()
         {
-            RespuestaBase<List<NivelTostadoRespuesta>> respuesta = new();
+            RespuestaBase<List<TipoProductoResponse>> respuesta = new();
             try
             {
                 DataTable resultado = new();
-                Dictionary<string, object> parametros = new();
+                Dictionary<string, object> parametros = [];
 
-                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerNivelTostado", parametros);
+                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerTipoProducto", parametros);
                 if (resultado != null)
                 {
-                    List<NivelTostadoRespuesta> lista = new();
+                    List<TipoProductoResponse> lista = [];
                     foreach (DataRow dr in resultado.Rows)
                     {
-                        lista.Add(new NivelTostadoRespuesta
+                        lista.Add(new TipoProductoResponse
                         {
-                            IdNivelTostado = int.Parse(dr["IdNivelTostado"].ToString() ?? "0"),
+                            IdTipoProducto = int.Parse(dr["IdTipoProducto"].ToString() ?? "0"),
                             Nombre = dr["Nombre"].ToString() ?? string.Empty,
                         });
                     }
@@ -368,7 +368,130 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             {
                 respuesta.Codigo = 999;
                 respuesta.Mensaje = ex.ToString();
-                Bitacoras.GuardarError(ex.ToString(), new { });
+                this.bitacora.GuardarError(ex.ToString(), new { });
+            }
+
+            return respuesta;
+        }
+
+        internal RespuestaBase<ListadoCatalogoProductosRespuesta> ObtenerCatalogoCombo()
+        {
+            RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = new();
+
+            try
+            {
+                respuesta.Datos = new();
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = [];
+
+                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerProductosCombos", parametros);
+                if (resultado != null)
+                {
+                    List<CatalogoProductoResponse> cafe =new(), tasa = new(), filtro = new();
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        switch (dr["Tipo"].ToString())
+                        {
+                            case "1":
+                                cafe.Add(
+                                    new CatalogoProductoResponse
+                                    {
+                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
+                                        Nombre = dr["NombreProducto"].ToString(),
+                                    }
+                                    );
+                                break;
+                            case "2":
+                                tasa.Add(
+                                    new CatalogoProductoResponse
+                                    {
+                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
+                                        Nombre = dr["NombreProducto"].ToString(),
+                                    }
+                                    );
+                                break;
+                            case "3":
+                                filtro.Add(
+                                    new CatalogoProductoResponse
+                                    {
+                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
+                                        Nombre = dr["NombreProducto"].ToString(),
+                                    }
+                                    );
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    respuesta.Datos.Cafe = cafe;
+                    respuesta.Datos.Tasa = tasa;
+                    respuesta.Datos.Filtros = filtro;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.bitacora.GuardarError(ex.ToString(), new { });
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+            }
+
+            return respuesta;
+        }
+
+        internal RespuestaBase<List<CombosResponse>> ObtenerListadoCombos()
+        {
+            RespuestaBase<List<CombosResponse>> respuesta = new();
+            try
+            {
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = [];
+
+                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ListadosCombos", parametros);
+                if (resultado != null)
+                {
+                    List<CombosResponse> lista = [];
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        lista.Add(new CombosResponse
+                        {
+                            IdCodigoCombo = int.Parse(dr["IdComboProducto"].ToString() ?? "0"),
+                            Nombre = dr["Nombre"].ToString() ?? string.Empty,
+                            Descripcion = dr["Descripcion"].ToString() ?? string.Empty,
+                        });
+                    }
+
+                    respuesta.Datos = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+                this.bitacora.GuardarError(ex.ToString(), new { });
+            }
+
+            return respuesta;
+        }
+
+        internal EliminarComboRespuesta EliminarCombo(EliminarCombo solicitud)
+        {
+            EliminarComboRespuesta respuesta = new();
+            try
+            {
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = new();
+                parametros = new Dictionary<string, object>
+                {
+                    { "IdCombo", solicitud.IdCombo }
+                };
+
+                respuesta.ComboEliminadoExitosamente = this.ejecutarSP.ExecuteNonQuery("SP_EliminarCombo", parametros);
+                respuesta.Mensaje = respuesta.ComboEliminadoExitosamente ? "Combo eliminado exitosamente" : "Ocurrio un error";
+            }
+            catch (Exception ex)
+            {
+                this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
             return respuesta;
