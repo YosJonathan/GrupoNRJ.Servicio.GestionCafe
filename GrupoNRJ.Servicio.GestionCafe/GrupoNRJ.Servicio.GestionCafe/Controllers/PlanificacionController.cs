@@ -2,6 +2,7 @@
 using GrupoNRJ.Servicio.GestionCafe.Factory;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using GrupoNRJ.Servicio.GestionCafe;
 
 
 namespace GrupoNRJ.Servicio.GestionCafe.Controllers
