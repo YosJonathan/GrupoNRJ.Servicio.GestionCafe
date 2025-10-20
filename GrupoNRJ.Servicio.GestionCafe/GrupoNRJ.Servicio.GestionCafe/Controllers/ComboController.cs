@@ -11,17 +11,32 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Controlador de combos.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ComboController : ControllerBase
     {
+        /// <summary>
+        /// Objeto de configuración.
+        /// </summary>
         private readonly IConfiguration configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComboController"/> class.
+        /// </summary>
+        /// <param name="configuration">Configuración de aplicación.</param>
         public ComboController(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Agregar un combo.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de combo.</param>
+        /// <returns>Confirmación de agregar combo.</returns>
         [HttpPost("AgregarCombo")]
         public IActionResult AgregarCombo(AgregarComboSolicitud solicitud)
         {
@@ -33,7 +48,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
-
+        /// <summary>
+        /// Listado de combos.
+        /// </summary>
+        /// <returns>Respuesta de listado de combos.</returns>
         [HttpPost("ListaCombos")]
         public IActionResult ListaCombos()
         {
@@ -42,6 +60,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Eliminar combo.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de eliminación de combo.</param>
+        /// <returns>Confirmación de eliminación.</returns>
         [HttpPost("eliminarCombo")]
         public IActionResult EliminarCombo(EliminarCombo solicitud)
         {
@@ -49,6 +72,5 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             EliminarComboRespuesta respuesta = gestor.EliminarCombo(solicitud);
             return this.Ok(respuesta);
         }
-
     }
 }

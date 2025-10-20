@@ -10,17 +10,32 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Controlador de inventario.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class InventarioController : ControllerBase
     {
+        /// <summary>
+        /// Objeto de configuración.
+        /// </summary>
         private readonly IConfiguration configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InventarioController"/> class.
+        /// </summary>
+        /// <param name="configuration">Objeto de configuración.</param>
         public InventarioController(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Agregar un nuevo producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de creación.</param>
+        /// <returns>Confirmación de creación.</returns>
         [HttpPost("agregarProducto")]
         public IActionResult AgregarProducto(AgregarProductoSolicitud solicitud)
         {
@@ -29,6 +44,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Eliminación de producto.
+        /// </summary>
+        /// <param name="solicitud">solicitud de eliminación.</param>
+        /// <returns>confirmación de eliminación.</returns>
         [HttpPost("eliminarProducto")]
         public IActionResult EliminarProducto(EliminarProductoSolicitud solicitud)
         {
@@ -37,6 +57,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Consulta de inventario.
+        /// </summary>
+        /// <returns>Respuesta de consulta de inventario.</returns>
         [HttpPost("inventario")]
         public IActionResult ConsultarInvetario()
         {
@@ -45,6 +69,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(resultado);
         }
 
+        /// <summary>
+        /// Modificar el producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de modificación.</param>
+        /// <returns>Confirmación de producto.</returns>
         [HttpPost("ModificarProducto")]
         public IActionResult ModificarProducto(ModificarProductoSolicitud solicitud)
         {
@@ -53,6 +82,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(resultado);
         }
 
+        /// <summary>
+        /// Consulta los movimientos del producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de consulta de movimientos.</param>
+        /// <returns>Listado de movimientos.</returns>
         [HttpPost("ConsultarMovimientos")]
         public IActionResult ConsultarMovimientosProducto(ConsultarMovimientosProductoSolicitud solicitud)
         {
@@ -61,6 +95,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(resultado);
         }
 
+        /// <summary>
+        /// Ingresar movimientos.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de ingreso.</param>
+        /// <returns>Confirmación de ingresos.</returns>
         [HttpPost("IngresarMovimiento")]
         public IActionResult IngresarMovimiento(AgregarMovimientoSolicitud solicitud)
         {
@@ -69,6 +108,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(resultado);
         }
 
+        /// <summary>
+        /// Obtener las alertas.
+        /// </summary>
+        /// <returns>Alertas de umbreales.</returns>
         [HttpPost("ObtenerAlertas")]
         public IActionResult ObtenerAlertas()
         {
@@ -77,6 +120,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Obtener la información del producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de información de producto.</param>
+        /// <returns>Listado de información de producto.</returns>
         [HttpPost("ObtenerInfoProducto")]
         public IActionResult ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
         {

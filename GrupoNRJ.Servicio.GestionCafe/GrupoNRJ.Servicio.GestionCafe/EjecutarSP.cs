@@ -9,29 +9,38 @@ namespace GrupoNRJ.Servicio.GestionCafe
 
     public class EjecutarSP
     {
-        private readonly string _connectionString;
+        private readonly string connectionString;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EjecutarSP"/> class.
+        /// </summary>
+        /// <param name="configuration">Objeto de configuración.</param>
+        /// <param name="bitacora">Bitacora.</param>
+        /// <exception cref="InvalidOperationException">Excepción de conexión no encontrada.</exception>
         public EjecutarSP(IConfiguration configuration, bool bitacora = false)
         {
             // Lee la cadena de conexión desde appsettings.json
             if (bitacora)
             {
-                _connectionString = configuration.GetConnectionString("Configuracion")
+                this.connectionString = configuration.GetConnectionString("Configuracion")
                     ?? throw new InvalidOperationException("Connection string not found.");
             }
             else
             {
-                _connectionString = configuration.GetConnectionString("DefaultConnection")
+                this.connectionString = configuration.GetConnectionString("DefaultConnection")
                     ?? throw new InvalidOperationException("Connection string not found.");
             }
         }
 
         /// <summary>
-        /// Ejecuta un procedimiento almacenado y devuelve un DataTable con los resultados.
+        /// Ejecuta los procedimientos almacenados.
         /// </summary>
+        /// <param name="storedProcedure">Nombre de SP.</param>
+        /// <param name="parameters">Parametros.</param>
+        /// <returns>Respuesta de procedimiento.</returns>
         public DataTable ExecuteStoredProcedure(string storedProcedure, Dictionary<string, object>? parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
             using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
@@ -55,11 +64,14 @@ namespace GrupoNRJ.Servicio.GestionCafe
         }
 
         /// <summary>
-        /// Ejecuta un procedimiento almacenado que no devuelve datos (INSERT, UPDATE, DELETE).
+        /// Ejecuta un procedimiento almacenado sin respuesta.
         /// </summary>
+        /// <param name="storedProcedure">Nombre de SP.</param>
+        /// <param name="parameters">Parametros.</param>
+        /// <returns>Confirmación de SP ejecutado correctamente.</returns>
         public bool ExecuteNonQuery(string storedProcedure, Dictionary<string, object>? parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
             using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
                 command.CommandType = CommandType.StoredProcedure;

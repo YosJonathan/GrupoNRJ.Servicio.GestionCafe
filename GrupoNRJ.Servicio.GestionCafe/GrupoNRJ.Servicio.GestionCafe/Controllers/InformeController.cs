@@ -1,61 +1,55 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
+﻿// <copyright file="InformeController.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
 
 namespace GrupoNRJ.Servicio.GestionCafe.Controllers
 {
+    using System.Data;
+    using GrupoNRJ.Modelos.GestionCafe;
+    using GrupoNRJ.Modelos.GestionCafe.Respuestas;
+    using GrupoNRJ.Servicio.GestionCafe.Facade;
+    using Microsoft.AspNetCore.Mvc;
+
+    /// <summary>
+    /// Controlador para informes.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class InformeController : Controller
     {
+        private readonly IConfiguration configuration;
 
-        private readonly EjecutarSP sp;
-        public InformeController(EjecutarSP sp)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InformeController"/> class.
+        /// </summary>
+        /// <param name="configuration">Configuracion.</param>
+        public InformeController(IConfiguration configuration)
         {
-            this.sp = sp;
+            this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Obtener el avance de los lotes.
+        /// </summary>
+        /// <returns>Respuesta de lotes.</returns>
         [HttpGet("reportes/avanceLotes")]
-        public ActionResult getAvanceLotes()
+        public ActionResult GetAvanceLotes()
         {
-            DataTable dt = sp.ExecuteStoredProcedure("SP_REPORTE_AVANCE_LOTE");
-
-            var reporteLote = new List<Object>();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                reporteLote.Add(new
-                {
-                    idLote = Convert.ToInt32(row["IDLOTE"]),
-                    tipoGrano = row["TIPOGRANO"].ToString(),
-                    tipoTueste = row["TIPOTUESTE"].ToString(),
-                    estadoActual = Convert.ToInt32(row["ESTADO_ACTUAL"]),
-                    fechaUltimoCambio = Convert.ToDateTime(row["FECHA_ULTIMO_CAMBIO"]),
-                    situacion = row["SITUACION"].ToString()
-                });
-            }
-
-            return Ok(reporteLote);
+            FacadeDeProduccion facadeDeProduccion = new(this.configuration);
+            RespuestaBase<List<ObtenerLotesEnProcesoRespuesta>> respuesta = facadeDeProduccion.GenerarReporteAvanceLotes();
+            return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Obtener producción de área.
+        /// </summary>
+        /// <returns>Respuesta de producción de área.</returns>
         [HttpGet("reportes/produccionArea")]
-        public ActionResult getProduccionArea()
+        public ActionResult GetProduccionArea()
         {
-            DataTable dt = sp.ExecuteStoredProcedure("SP_REPORTE_PRODUCCION_AREA");
-
-
-            var produccionArea = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                produccionArea.Add(new
-                {
-                    idLote = Convert.ToInt32(row["IDLOTE"]),
-                    estado = Convert.ToInt32(row["ESTADO"]),
-                    area = row["AREA"].ToString()                    
-                });
-            }
-
-
-            return Ok(produccionArea);
+            FacadeDeProduccion facadeDeProduccion = new(this.configuration);
+            RespuestaBase<List<ObtenerProduccionPorAreaRespuesta>> respuesta = facadeDeProduccion.GenerarReporteProduccionPorArea();
+            return this.Ok(respuesta);
         }
     }
 }

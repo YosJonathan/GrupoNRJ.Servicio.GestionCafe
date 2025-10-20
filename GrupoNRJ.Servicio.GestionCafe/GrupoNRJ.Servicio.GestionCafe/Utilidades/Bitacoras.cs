@@ -28,10 +28,12 @@ namespace GrupoNRJ.Servicio.GestionCafe.Utilidades
         {
             try
             {
+#pragma warning disable SA1118 // Parameter must not span multiple lines
                 return JsonSerializer.Serialize(objeto, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 });
+#pragma warning restore SA1118 // Parameter must not span multiple lines
             }
             catch (Exception ex)
             {
@@ -43,13 +45,18 @@ namespace GrupoNRJ.Servicio.GestionCafe.Utilidades
         /// <summary>
         /// Guarda un mensaje de error en la consola incluyendo el nombre del método que llamó.
         /// </summary>
+        /// <typeparam name="T">Objeto.</typeparam>
         /// <param name="mensaje">Mensaje de error</param>
         /// <param name="modelos">Modelo.</param>
         /// <param name="nombreMetodo">Nombre del método que llamó (se obtiene automáticamente si no se pasa)</param>
-        public void GuardarError<T>(string mensaje, T modelos,
+        public void GuardarError<T>(string mensaje, T? modelos,
+#pragma warning disable SA1117 // Parameters must be on same line or separate lines
             [CallerMemberName] string nombreMetodo = "")
+#pragma warning restore SA1117 // Parameters must be on same line or separate lines
         {
-            string cadena = $"Metodo: {nombreMetodo} - Excepción: {mensaje} - Parametros: {modelos}";
+            string cadena = string.Empty;
+            cadena = modelos == null ?$"Metodo: {nombreMetodo} - Excepción: {mensaje}" 
+                : $"Metodo: {nombreMetodo} - Excepción: {mensaje} - Parametros: {ConvertirAJson(modelos)}";
             try
             {
                 DataTable resultado = new();

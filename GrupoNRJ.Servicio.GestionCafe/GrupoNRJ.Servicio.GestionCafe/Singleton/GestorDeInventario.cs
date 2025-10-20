@@ -11,6 +11,9 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
     using GrupoNRJ.Servicio.GestionCafe.Factory_Method;
     using GrupoNRJ.Servicio.GestionCafe.Utilidades;
 
+    /// <summary>
+    /// Clase para gestor de inventario.
+    /// </summary>
     public class GestorDeInventario
     {
         private static GestorDeInventario? instancia;
@@ -19,7 +22,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         private readonly Bitacoras bitacora;
         private readonly Dictionary<int, int> inventario;
 
-        // 🔒 Constructor privado
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GestorDeInventario"/> class.
+        /// </summary>
+        /// <param name="configuration">Objeto de configuración.</param>
         private GestorDeInventario(IConfiguration configuration)
         {
             this.inventario = new Dictionary<int, int>();
@@ -27,7 +33,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             this.bitacora = new Bitacoras(configuration);
         }
 
-        // 🔑 Acceso Singleton
+        /// <summary>
+        /// Instancia de acceso singleton.
+        /// </summary>
+        /// <param name="configuration">Objeto de configuración.</param>
+        /// <returns>Objeto de instacia.</returns>
         public static GestorDeInventario GetInstance(IConfiguration configuration)
         {
             if (instancia == null)
@@ -41,7 +51,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return instancia;
         }
 
-        // 📌 Métodos principales
+        /// <summary>
+        /// Agregar nuevo producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de adición.</param>
+        /// <returns>Respuesta de agregar producto.</returns>
         public AgregarProductoRespuesta AgregarProducto(AgregarProductoSolicitud solicitud)
         {
             AgregarProductoRespuesta respuesta = new();
@@ -67,6 +81,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Función para modificar la información de un producto.
+        /// </summary>
+        /// <param name="solicitud">Solilcitud de modificación.</param>
+        /// <returns>Respuesta de modificación.</returns>
         public ModificarProductoRespuesta ModificarProducto(ModificarProductoSolicitud solicitud)
         {
             ModificarProductoRespuesta respuesta = new();
@@ -93,6 +112,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Eliminación de productos.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de eliminación.</param>
+        /// <returns>Respuesta de eliminación.</returns>
         public EliminarProductoRespuesta EliminarProducto(EliminarProductoSolicitud solicitud)
         {
             EliminarProductoRespuesta respuesta = new();
@@ -116,6 +140,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Listado de productos creados.
+        /// </summary>
+        /// <returns>Listado de productos.</returns>
         public RespuestaBase<List<ProductoRespuesta>> ConsultarInventario()
         {
             RespuestaBase<List<ProductoRespuesta>> respuesta = new();
@@ -154,6 +182,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Consulta de movimientos por producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de consulta de movimientos.</param>
+        /// <returns>Movimientos por producto.</returns>
         public RespuestaBase<List<ConsultarMovimientosProductoRespuesta>> ConsultarMovimientosProducto(ConsultarMovimientosProductoSolicitud solicitud)
         {
             RespuestaBase<List<ConsultarMovimientosProductoRespuesta>> respuesta = new();
@@ -197,13 +230,18 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Agregando nuevos movimientos.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de movimientos.</param>
+        /// <returns>Movimientos por producto.</returns>
         public AgregarMovimientoRespuesta AgregarMovimiento(AgregarMovimientoSolicitud solicitud)
         {
             AgregarMovimientoRespuesta respuesta = new();
             try
             {
                 DataTable resultado = new();
-                Dictionary<string, object> parametros = [];
+                Dictionary<string, object> parametros = new();
                 parametros = new Dictionary<string, object>
                 {
                     { "IdProducto", solicitud.IdProducto },
@@ -230,11 +268,10 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
-        public Dictionary<int, int> ObtenerInventario()
-        {
-            return this.inventario;
-        }
-
+        /// <summary>
+        /// Obtener alertas de productos bajos.
+        /// </summary>
+        /// <returns>Listado de nuevas alertas.</returns>
         internal RespuestaBase<List<ObtenerAlertasRespuesta>> ObtenerAlertas()
         {
             RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
@@ -271,40 +308,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
-        internal RespuestaBase<List<GranosRespuesta>> ObtenerGranos()
-        {
-            RespuestaBase<List<GranosRespuesta>> respuesta = new();
-            try
-            {
-                DataTable resultado = new();
-                Dictionary<string, object> parametros = [];
-
-                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerGranos", parametros);
-                if (resultado != null)
-                {
-                    List<GranosRespuesta> lista = [];
-                    foreach (DataRow dr in resultado.Rows)
-                    {
-                        lista.Add(new GranosRespuesta
-                        {
-                            IdGranos = int.Parse(dr["GranoID"].ToString() ?? "0"),
-                            Nombre = dr["Tipo"].ToString() ?? string.Empty,
-                        });
-                    }
-
-                    respuesta.Datos = lista;
-                }
-            }
-            catch (Exception ex)
-            {
-                respuesta.Codigo = 999;
-                respuesta.Mensaje = ex.ToString();
-                this.bitacora.GuardarError(ex.ToString(), new { });
-            }
-
-            return respuesta;
-        }
-
+        /// <summary>
+        /// Obtener la información del producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de información de producto.</param>
+        /// <returns>Respuesta de modificación.</returns>
         internal RespuestaBase<ObtenerInfoProductoRespuesta> ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
         {
             RespuestaBase<ObtenerInfoProductoRespuesta> respuesta = new();
@@ -340,117 +348,22 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
-        internal RespuestaBase<List<TipoProductoResponse>> ObtenerTipoProducto()
-        {
-            RespuestaBase<List<TipoProductoResponse>> respuesta = new();
-            try
-            {
-                DataTable resultado = new();
-                Dictionary<string, object> parametros = [];
-
-                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerTipoProducto", parametros);
-                if (resultado != null)
-                {
-                    List<TipoProductoResponse> lista = [];
-                    foreach (DataRow dr in resultado.Rows)
-                    {
-                        lista.Add(new TipoProductoResponse
-                        {
-                            IdTipoProducto = int.Parse(dr["IdTipoProducto"].ToString() ?? "0"),
-                            Nombre = dr["Nombre"].ToString() ?? string.Empty,
-                        });
-                    }
-
-                    respuesta.Datos = lista;
-                }
-            }
-            catch (Exception ex)
-            {
-                respuesta.Codigo = 999;
-                respuesta.Mensaje = ex.ToString();
-                this.bitacora.GuardarError(ex.ToString(), new { });
-            }
-
-            return respuesta;
-        }
-
-        internal RespuestaBase<ListadoCatalogoProductosRespuesta> ObtenerCatalogoCombo()
-        {
-            RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = new();
-
-            try
-            {
-                respuesta.Datos = new();
-                DataTable resultado = new();
-                Dictionary<string, object> parametros = [];
-
-                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerProductosCombos", parametros);
-                if (resultado != null)
-                {
-                    List<CatalogoProductoResponse> cafe =new(), tasa = new(), filtro = new();
-                    foreach (DataRow dr in resultado.Rows)
-                    {
-                        switch (dr["Tipo"].ToString())
-                        {
-                            case "1":
-                                cafe.Add(
-                                    new CatalogoProductoResponse
-                                    {
-                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
-                                        Nombre = dr["NombreProducto"].ToString(),
-                                    }
-                                    );
-                                break;
-                            case "2":
-                                tasa.Add(
-                                    new CatalogoProductoResponse
-                                    {
-                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
-                                        Nombre = dr["NombreProducto"].ToString(),
-                                    }
-                                    );
-                                break;
-                            case "3":
-                                filtro.Add(
-                                    new CatalogoProductoResponse
-                                    {
-                                        Codigo = int.Parse(dr["ProductoID"].ToString()),
-                                        Nombre = dr["NombreProducto"].ToString(),
-                                    }
-                                    );
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    respuesta.Datos.Cafe = cafe;
-                    respuesta.Datos.Tasa = tasa;
-                    respuesta.Datos.Filtros = filtro;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.bitacora.GuardarError(ex.ToString(), new { });
-                respuesta.Codigo = 999;
-                respuesta.Mensaje = ex.ToString();
-            }
-
-            return respuesta;
-        }
-
+        /// <summary>
+        /// Obtiene el listado de combos.
+        /// </summary>
+        /// <returns>Listado de combos.</returns>
         internal RespuestaBase<List<CombosResponse>> ObtenerListadoCombos()
         {
             RespuestaBase<List<CombosResponse>> respuesta = new();
             try
             {
                 DataTable resultado = new();
-                Dictionary<string, object> parametros = [];
+                Dictionary<string, object> parametros = new();
 
                 resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ListadosCombos", parametros);
                 if (resultado != null)
                 {
-                    List<CombosResponse> lista = [];
+                    List<CombosResponse> lista = new();
                     foreach (DataRow dr in resultado.Rows)
                     {
                         lista.Add(new CombosResponse
@@ -474,6 +387,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Eliminación de combos.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de eliminación de combos.</param>
+        /// <returns>Respuesta de eliminación.</returns>
         internal EliminarComboRespuesta EliminarCombo(EliminarCombo solicitud)
         {
             EliminarComboRespuesta respuesta = new();

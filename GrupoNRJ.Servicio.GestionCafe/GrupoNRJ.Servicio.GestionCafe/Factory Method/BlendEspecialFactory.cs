@@ -9,18 +9,31 @@ namespace GrupoNRJ.Servicio.GestionCafe.Factory_Method
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using GrupoNRJ.Servicio.GestionCafe.Utilidades;
 
+    /// <summary>
+    /// Fabrica de cafe blend.
+    /// </summary>
     public class BlendEspecialFactory : IProductoFactory
     {
         private readonly EjecutarSP ejecutarSP;
 
         private readonly Bitacoras bitacora;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlendEspecialFactory"/> class.
+        /// </summary>
+        /// <param name="ejecutarSP">Ejecutar en SPs.</param>
+        /// <param name="bitacora">Bitacora.</param>
         public BlendEspecialFactory(EjecutarSP ejecutarSP, Bitacoras bitacora)
         {
             this.ejecutarSP = ejecutarSP;
             this.bitacora = bitacora;
         }
 
+        /// <summary>
+        /// Agregando nuevo producto.
+        /// </summary>
+        /// <param name="solicitud">Solicitud al agregar un nuevo producto.</param>
+        /// <returns>Respuesta de agregar.</returns>
         public AgregarProductoRespuesta AgregarProducto(AgregarProductoSolicitud solicitud)
         {
             AgregarProductoRespuesta respuesta = new();
@@ -34,7 +47,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Factory_Method
                     { "Cantidad", solicitud.Cantidad },
                     { "ValorMinimo", solicitud.ValorMinimo },
                     { "TipoProducto", solicitud.TipoProducto },
-                    {"GranoId", solicitud.IdGrano },
+                    { "GranoId", solicitud.IdGrano },
                 };
 
                 respuesta.RegistroIngresadoCorrectamente = this.ejecutarSP.ExecuteNonQuery("SP_GuardarProducto", parametros);

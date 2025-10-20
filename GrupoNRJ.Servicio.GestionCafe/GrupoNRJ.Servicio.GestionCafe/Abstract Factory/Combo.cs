@@ -9,12 +9,19 @@ namespace GrupoNRJ.Servicio.GestionCafe.Abstract_Factory
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using GrupoNRJ.Servicio.GestionCafe.Utilidades;
 
+    /// <summary>
+    /// Clase de combos.
+    /// </summary>
     public class Combo
     {
         private readonly ICafe cafe;
         private readonly ITasa taza;
         private readonly IFiltro filtro;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Combo"/> class.
+        /// </summary>
+        /// <param name="fabrica">Fabrica.</param>
         public Combo(IFabricaDeCombos fabrica)
         {
             // El cliente no sabe "cómo" se crean los objetos,
@@ -24,6 +31,12 @@ namespace GrupoNRJ.Servicio.GestionCafe.Abstract_Factory
             this.filtro = fabrica.CrearFiltro();
         }
 
+        /// <summary>
+        /// Creación de combo.
+        /// </summary>
+        /// <param name="nombre">Nombre del combo.</param>
+        /// <param name="configuration">Información del combo.</param>
+        /// <returns>Confirmación de creación.</returns>
         public AgregarCombosRespuestas CreandoCombo(string nombre, IConfiguration configuration)
         {
             AgregarCombosRespuestas respuesta = new();
@@ -53,5 +66,4 @@ namespace GrupoNRJ.Servicio.GestionCafe.Abstract_Factory
             return respuesta;
         }
     }
-
 }

@@ -1,176 +1,104 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using GrupoNRJ.Servicio.GestionCafe;
-
+﻿// <copyright file="PlanificacionController.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
 
 namespace GrupoNRJ.Servicio.GestionCafe.Controllers
 {
+    using System.Data;
+    using GrupoNRJ.Modelos.GestionCafe;
+    using GrupoNRJ.Modelos.GestionCafe.Respuestas;
+    using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
+    using GrupoNRJ.Servicio.GestionCafe.Singleton;
+    using Microsoft.AspNetCore.Mvc;
+
     [ApiController]
     [Route("api/[controller]")]
     public class PlanificacionController : ControllerBase
     {
         private readonly EjecutarSP sp;
-        public PlanificacionController(EjecutarSP sp)
+
+        /// <summary>
+        /// Configuración.
+        /// </summary>
+        private readonly IConfiguration configuration;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlanificacionController"/> class.
+        /// </summary>
+        /// <param name="sp">Ejecutar Sp.</param>
+        /// <param name="configuration">Objeto de configuración.</param>
+        public PlanificacionController(EjecutarSP sp, IConfiguration configuration)
         {
             this.sp = sp;
+            this.configuration = configuration;
         }
+
         /// <summary>
-        /// MUESTRA EL ESTADO DE LOS LOTES DE CAFE
+        /// Obtiene los estados de cafe y lotes.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Estado de lotes.</returns>
         [HttpGet("estadoLotes")]
-        public ActionResult getEstadoLotes()
+        public ActionResult GetEstadoLotes()
         {
+            var gestor = GestorDePlanificacion.GetInstance(this.configuration);
+            RespuestaBase<List<ObtenerEstadoLotesRespuesta>> respuesta = gestor.ObtenerEstadoLotes();
 
-            DataTable dt = sp.ExecuteStoredProcedure("SP_S_DATOS_LOTE");
-
-            // Convertir DataTable en lista de objetos anónimos
-            var info_estado = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                info_estado.Add(new
-                {
-                    idLote = row["NO_LOTE"],
-                    cantidad = row["KILOGRAMOS"],
-                    tipoGrano = row["TIPO_GRANO"],
-                    tipoTueste = row["TUESTE"],
-                    fechaIn = row["FECHA_LLEGADA"],
-                    fechaOut = row["FECHA_FINALIZADA"],
-                });
-            }
-
-            return Ok(info_estado);
-
+            return this.Ok(respuesta);
         }
+
         /// <summary>
-        /// MUESTRA LA PLANIFICACION DE TODOS LOS LOTES DE CAFE
+        /// Muestra la planificación de los lotes de café.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Obtener planificación.</returns>
         [HttpGet("planificacion")]
-        public ActionResult getPlanificacion()
+        public ActionResult GetPlanificacion()
         {
+            var gestor = GestorDePlanificacion.GetInstance(this.configuration);
+            RespuestaBase<List<ObtenerPlanificacionRespuesta>> respuesta = gestor.ObtenerPlanificacion();
 
-            DataTable dt = sp.ExecuteStoredProcedure("SP_S_DATOS_PLANI_LOTE");
-
-            var info_estado = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                info_estado.Add(new
-                {
-                    idPlani = row["NO_PLANI"],
-                    idLote = row["NO_LOTE"],
-                    estado = row["ESTADO"],
-                    fechaInicio = row["FECHA_INICIO_ESTIMADA"],
-                    fechaFin = row["FECHA_FIN_ESTIMADA"]
-                });
-            }
-
-            return Ok(info_estado);
-
+            return this.Ok(respuesta);
         }
+
         /// <summary>
-        /// MUESTRA LA PLANIFICACION DE UN LOTE DE CAFE ESPECIFICO
+        /// Muestra la planificación de los lotes.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="solicitud">Solicitud de planificación.</param>
+        /// <returns>Información de planificación./returns>
         [HttpGet("planificacion/id")]
-        public ActionResult getPlanificacionLote([FromQuery] int id)
+        public ActionResult GetPlanificacionLote([FromQuery] ObtenerPlanificacionLoteSolicitud solicitud)
         {
+            var gestor = GestorDePlanificacion.GetInstance(this.configuration);
+            RespuestaBase<List<ObtenerPlanificacionRespuesta>> respuesta = gestor.ObtenerLotesPlanificacion(solicitud);
 
-            var parametros = new Dictionary<string, object>
-            {
-                { "@P_IDPLANIFICACION", id }
-            };
-
-            DataTable dt = sp.ExecuteStoredProcedure("SP_S_DATOS_PLANI_LOTE_B", parametros);
-
-            // Convertir DataTable en lista de objetos anónimos
-            var info_estado = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                info_estado.Add(new
-                {
-                    idPlaini = row["NO_PLANI"],
-                    idLote = row["NO_LOTE"],
-                    estado = row["ESTADO"],
-                    fechaInicio = row["FECHA_INICIO_ESTIMADA"],
-                    fechaFin = row["FECHA_FIN_ESTIMADA"]
-                });
-            }
-
-            return Ok(info_estado);
-
+            return this.Ok(respuesta);
         }
 
+        /// <summary>
+        /// Endpoint para una nueva planificación.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de planificación.</param>
+        /// <returns>Respuesta de ingreso de planificación.</returns>
         [HttpPost("planificacion/nueva")]
-        public ActionResult postCrearPlanificacion([FromBody] dtoPlanificacion request)
+        public ActionResult PostCrearPlanificacion([FromBody] PlanificacionSolicitud solicitud)
         {
-            var parametros = new Dictionary<string, object>
-            {
-                { "@IDLOTE", request.IdLote },
-                { "@IDESTADO", request.IdEstado },
-                { "@FECHAESTIMADA", request.FechaEstimada },
-                { "@FECHAFINESTIMADA", request.FechaFinEstimada }
-            };
+            var gestor = GestorDePlanificacion.GetInstance(this.configuration);
+            RespuestaBase<List<ObtenerPlanificacionRespuesta>> respuesta = gestor.NuevaPlanificacion(solicitud);
 
-            DataTable dt = sp.ExecuteStoredProcedure("SP_I_NUEVA_PLANIFICACION", parametros);
-
-
-            var resultado = new List<object>();
-            foreach (DataRow row in dt.Rows)
-            {
-                resultado.Add(new
-                {
-                    IdPlanificacion = row["IDPLANIFICACION"],
-                    IdLote = row["IDLOTE"],
-                    Estado = row["IDESTADO"],
-                    FechaEstimada = row["FECHAESTIMADA"],
-                    FechaFinEstimada = row["FECHAFINESTIMADA"]
-                });
-            }
-
-            return Ok(resultado);
+            return this.Ok(respuesta);
         }
 
-
+        /// <summary>
+        /// Actualizar o modificar una nueva planificación.
+        /// </summary>
+        /// <param name="solicitud">Solicitud para actualizar.</param>
+        /// <returns>Respuesta para actualizar.</returns>
         [HttpPost("planificacion/actualizar")]
-        public ActionResult postActualizarPlanificacion([FromBody] dtoPlanificacion request)
+        public ActionResult PostActualizarPlanificacion([FromBody] PlanificacionSolicitud solicitud)
         {
-            try
-            {
-                var parametros = new Dictionary<string, object>
-                {
-                    { "@P_IDPLANIFICACION", request.IdPlani },
-                    { "@P_IDLOTE", request.IdLote },
-                    { "@P_IDESTADO", request.IdEstado },
-                    { "@P_FECHAESTIMADA", request.FechaEstimada == DateTime.MinValue ? DBNull.Value : request.FechaEstimada },
-                    { "@P_FECHAFINESTIMADA", request.FechaFinEstimada == DateTime.MinValue ? DBNull.Value : request.FechaFinEstimada }
-                };
+            var gestor = GestorDePlanificacion.GetInstance(this.configuration);
+            RespuestaBase<List<PlanificacionSolicitud>> respuesta = gestor.ActualizarPlanificacion(solicitud);
 
-                DataTable dt = sp.ExecuteStoredProcedure("SP_U_PLANIFICACION", parametros);
-
-                var resultado = new List<dtoPlanificacion>();
-                foreach (DataRow row in dt.Rows)
-                {
-                    resultado.Add(new dtoPlanificacion
-                    {
-                        IdPlani = Convert.ToInt32(row["IDPLANIFICACION"]),
-                        IdLote = Convert.ToInt32(row["IDLOTE"]),
-                        IdEstado = Convert.ToInt32(row["IDESTADO"]),
-                        FechaEstimada = row["FECHAESTIMADA"] == DBNull.Value ? null : Convert.ToDateTime(row["FECHAESTIMADA"]),
-                        FechaFinEstimada = row["FECHAFINESTIMADA"] == DBNull.Value ? null : Convert.ToDateTime(row["FECHAFINESTIMADA"])
-                    });
-                }
-
-                return Ok(resultado);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return this.Ok(respuesta);
         }
-
-
-
     }
 }
