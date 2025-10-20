@@ -51,7 +51,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// Obtener catalogo de granos.
         /// </summary>
         /// <returns>Listado de catalogos.</returns>
-        internal RespuestaBase<List<GranosRespuesta>> ObtenerGranos()
+        public RespuestaBase<List<GranosRespuesta>> ObtenerGranos()
         {
             RespuestaBase<List<GranosRespuesta>> respuesta = new();
             try
@@ -89,7 +89,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// Obtener catalogo de tipo de producto.
         /// </summary>
         /// <returns>Listado de tipos de productos.</returns>
-        internal RespuestaBase<List<TipoProductoResponse>> ObtenerTipoProducto()
+        public RespuestaBase<List<TipoProductoResponse>> ObtenerTipoProducto()
         {
             RespuestaBase<List<TipoProductoResponse>> respuesta = new();
             try
@@ -127,7 +127,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// Obtener catalogos de combos.
         /// </summary>
         /// <returns>Listado para llenar combos.</returns>
-        internal RespuestaBase<ListadoCatalogoProductosRespuesta> ObtenerCatalogoCombo()
+        public RespuestaBase<ListadoCatalogoProductosRespuesta> ObtenerCatalogoCombo()
         {
             RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = new();
 
