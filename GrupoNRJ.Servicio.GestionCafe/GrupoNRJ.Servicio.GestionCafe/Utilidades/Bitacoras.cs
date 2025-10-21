@@ -55,7 +55,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Utilidades
 #pragma warning restore SA1117 // Parameters must be on same line or separate lines
         {
             string cadena = string.Empty;
-            cadena = modelos == null ?$"Metodo: {nombreMetodo} - Excepción: {mensaje}" 
+            cadena = modelos == null ? $"Metodo: {nombreMetodo} - Excepción: {mensaje}"
                 : $"Metodo: {nombreMetodo} - Excepción: {mensaje} - Parametros: {ConvertirAJson(modelos)}";
             try
             {

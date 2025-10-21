@@ -14,9 +14,9 @@ namespace GrupoNRJ.Pruebas.GestionCafe
         /// </summary>
         /// <param name="codigo">Codigo</param>
         /// <returns>Codigo correcto.</returns>
-        internal static bool ValidarCodigo(int codigo)
+        internal static bool ValidarCodigo(int codigo, int valorEsperado = 0)
         {
-            return codigo == 0;
+            return codigo == valorEsperado;
         }
 
         internal static Dictionary<string, string> GenerarConfiguraciones()

@@ -1,4 +1,8 @@
-﻿namespace GrupoNRJ.Servicio.GestionCafe.Abstract_Factory
+﻿// <copyright file="ICafe.cs" company="GrupoAnalisis">
+// Copyright (c) GrupoAnalisis. All rights reserved.
+// </copyright>
+
+namespace GrupoNRJ.Servicio.GestionCafe.Abstract_Factory
 {
     /// <summary>
     /// Interfaz de cafe.

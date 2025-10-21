@@ -4,10 +4,10 @@
 
 namespace GrupoNRJ.Servicio.GestionCafe.Controllers
 {
-    using System.Data;
     using GrupoNRJ.Modelos.GestionCafe;
     using GrupoNRJ.Modelos.GestionCafe.Respuestas;
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
+    using GrupoNRJ.Servicio.GestionCafe.Factory;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
     using Microsoft.AspNetCore.Mvc;
 
@@ -94,6 +94,25 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         {
             var gestor = GestorDePlanificacion.GetInstance(this.configuration);
             RespuestaBase<List<PlanificacionSolicitud>> respuesta = gestor.ActualizarPlanificacion(solicitud);
+
+            return this.Ok(respuesta);
+        }
+
+        [HttpPost("CrearLote")]
+        public ActionResult CrearLote([FromBody] AgregarLoteSolicitud solicitud)
+        {
+            RespuestaBase<bool> respuesta = new();
+            respuesta.Datos = false;
+            try
+            {
+                ICafe cafe = CafeFactory.CrearCafe(solicitud.TipoGrano, solicitud.TipoTueste, this.configuration);
+                respuesta = cafe.CreaLote(solicitud.Cantidad);
+            }
+            catch (ArgumentException ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+            }
 
             return this.Ok(respuesta);
         }

@@ -103,7 +103,7 @@ public class Inventario
         AgregarMovimientoRespuesta respuesta = gestor.AgregarMovimiento(solicitud);
 
         Assert.NotNull(respuesta);
-        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo, 1));
     }
 
     [Fact]

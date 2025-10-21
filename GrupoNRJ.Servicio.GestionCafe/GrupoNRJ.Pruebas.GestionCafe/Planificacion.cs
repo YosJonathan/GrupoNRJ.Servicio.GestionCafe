@@ -5,6 +5,7 @@
 using GrupoNRJ.Modelos.GestionCafe;
 using GrupoNRJ.Modelos.GestionCafe.Respuestas;
 using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
+using GrupoNRJ.Servicio.GestionCafe.Factory;
 using GrupoNRJ.Servicio.GestionCafe.Singleton;
 using Microsoft.Extensions.Configuration;
 
@@ -22,6 +23,25 @@ public class Planificacion
             .AddInMemoryCollection(Validaciones.GenerarConfiguraciones())
             .Build();
 #pragma warning restore CS8620 // El argumento no se puede usar para el parámetro debido a las diferencias en la nulabilidad de los tipos de referencia.
+    }
+
+    [Fact]
+    public void CrearLote()
+    {
+        RespuestaBase<bool> respuesta = new();
+        try
+        {
+            ICafe cafe = CafeFactory.CrearCafe("arabica", "claro", this.configuration);
+            respuesta = cafe.CreaLote(2);
+        }
+        catch (ArgumentException ex)
+        {
+            respuesta.Codigo = 999;
+            respuesta.Mensaje = ex.ToString();
+        }
+
+        Assert.NotNull(respuesta);
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
     }
 
     [Fact]
@@ -59,7 +79,7 @@ public class Planificacion
     }
 
     [Fact]
-    public void GetEstadoLotes()
+    public void ObtenerEstadoLotes()
     {
         var gestor = GestorDePlanificacion.GetInstance(this.configuration);
         RespuestaBase<List<ObtenerEstadoLotesRespuesta>> respuesta = gestor.ObtenerEstadoLotes();

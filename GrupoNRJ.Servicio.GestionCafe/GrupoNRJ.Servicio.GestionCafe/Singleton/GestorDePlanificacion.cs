@@ -67,8 +67,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         Cantidad = double.Parse(row["KILOGRAMOS"].ToString() ?? "0"),
                         TipoGrano = row["TIPO_GRANO"].ToString() ?? string.Empty,
                         TipoTueste = row["TUESTE"].ToString() ?? string.Empty,
-                        FechaInicio = DateTime.Parse(row["FECHA_LLEGADA"].ToString() ?? default(DateTime).ToString()),
-                        FechaFin = DateTime.Parse(row["FECHA_FINALIZADA"].ToString() ?? default(DateTime).ToString()),
+                        FechaInicio = row["FECHA_LLEGADA"].ToString() ?? string.Empty,
+                        FechaFin = row["FECHA_FINALIZADA"].ToString() ?? string.Empty,
                     });
                 }
             }
@@ -101,8 +101,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         IdPlanificacion = int.Parse(row["NO_PLANI"].ToString() ?? "0"),
                         IdLote = int.Parse(row["NO_LOTE"].ToString() ?? "0"),
                         Estado = row["ESTADO"].ToString() ?? string.Empty,
-                        FechaInicio = DateTime.Parse(row["FECHA_INICIO_ESTIMADA"].ToString() ?? default(DateTime).ToString()),
-                        FechaFin = DateTime.Parse(row["FECHA_FIN_ESTIMADA"].ToString() ?? default(DateTime).ToString())
+                        FechaInicio = row["FECHA_INICIO_ESTIMADA"].ToString() ?? string.Empty,
+                        FechaFin = row["FECHA_FIN_ESTIMADA"].ToString() ?? string.Empty,
                     });
                 }
             }
@@ -143,8 +143,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         IdPlanificacion = int.Parse(row["NO_PLANI"].ToString() ?? "0"),
                         IdLote = int.Parse(row["NO_LOTE"].ToString() ?? "0"),
                         Estado = row["ESTADO"].ToString() ?? string.Empty,
-                        FechaInicio = DateTime.Parse(row["FECHA_INICIO_ESTIMADA"].ToString() ?? default(DateTime).ToString()),
-                        FechaFin = DateTime.Parse(row["FECHA_FIN_ESTIMADA"].ToString() ?? default(DateTime).ToString())
+                        FechaInicio = row["FECHA_INICIO_ESTIMADA"].ToString() ?? string.Empty,
+                        FechaFin = row["FECHA_FIN_ESTIMADA"].ToString() ?? string.Empty,
                     });
                 }
             }
@@ -187,8 +187,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         IdPlanificacion = int.Parse(row["IDPLANIFICACION"].ToString() ?? "0"),
                         IdLote = int.Parse(row["IDLOTE"].ToString() ?? "0"),
                         Estado = row["IDESTADO"].ToString() ?? string.Empty,
-                        FechaInicio = DateTime.Parse(row["FECHAESTIMADA"].ToString() ?? default(DateTime).ToString()),
-                        FechaFin = DateTime.Parse(row["FECHAFINESTIMADA"].ToString() ?? default(DateTime).ToString())
+                        FechaInicio = row["FECHAESTIMADA"].ToString() ?? string.Empty,
+                        FechaFin = row["FECHAFINESTIMADA"].ToString() ?? string.Empty,
                     });
                 }
             }
@@ -202,6 +202,11 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             return respuesta;
         }
 
+        /// <summary>
+        /// Actualizar la planificación.
+        /// </summary>
+        /// <param name="solicitud">Solicitud de planificación.</param>
+        /// <returns>Respuesta de actualización.</returns>
         public RespuestaBase<List<PlanificacionSolicitud>> ActualizarPlanificacion(PlanificacionSolicitud solicitud)
         {
             RespuestaBase<List<PlanificacionSolicitud>> respuesta = new();
@@ -229,6 +234,39 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
                         FechaEstimada = row["FECHAESTIMADA"] == DBNull.Value ? null : Convert.ToDateTime(row["FECHAESTIMADA"]),
                         FechaFinEstimada = row["FECHAFINESTIMADA"] == DBNull.Value ? null : Convert.ToDateTime(row["FECHAFINESTIMADA"])
                     });
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+                this.bitacora.GuardarError(ex.ToString(), new { });
+            }
+
+            return respuesta;
+        }
+
+        public RespuestaBase<bool> CrearLote(decimal cantidad, string grano, string tueste)
+        {
+            RespuestaBase<bool> respuesta = new();
+
+            try
+            {
+                var parametros = new Dictionary<string, object>
+                {
+                    { "@P_CANTIDAD", cantidad },
+                    { "@P_GRANO", grano },
+                    { "@P_TUESTE", tueste }
+                };
+
+                if (!this.ejecutarSP.ExecuteNonQuery("SP_I_NUEVO_LOTE", parametros))
+                {
+                    respuesta.Codigo = 999;
+                    respuesta.Mensaje = "Fallo al ejecutar el procedimiento almacenado.";
+                }
+                else
+                {
+                    respuesta.Datos = true;
                 }
             }
             catch (Exception ex)

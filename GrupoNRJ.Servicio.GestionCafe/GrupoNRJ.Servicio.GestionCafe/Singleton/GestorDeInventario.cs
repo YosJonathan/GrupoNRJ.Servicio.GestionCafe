@@ -106,6 +106,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
             }
             catch (Exception ex)
             {
+                respuesta.Mensaje = ex.ToString();
                 this.bitacora.GuardarError(ex.ToString(), solicitud);
             }
 
@@ -352,7 +353,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// Obtiene el listado de combos.
         /// </summary>
         /// <returns>Listado de combos.</returns>
-        internal RespuestaBase<List<CombosResponse>> ObtenerListadoCombos()
+        public RespuestaBase<List<CombosResponse>> ObtenerListadoCombos()
         {
             RespuestaBase<List<CombosResponse>> respuesta = new();
             try
@@ -392,7 +393,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// </summary>
         /// <param name="solicitud">Solicitud de eliminación de combos.</param>
         /// <returns>Respuesta de eliminación.</returns>
-        internal EliminarComboRespuesta EliminarCombo(EliminarCombo solicitud)
+        public EliminarComboRespuesta EliminarCombo(EliminarCombo solicitud)
         {
             EliminarComboRespuesta respuesta = new();
             try
