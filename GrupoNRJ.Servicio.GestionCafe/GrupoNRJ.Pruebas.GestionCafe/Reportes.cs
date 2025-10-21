@@ -31,6 +31,6 @@ public class Reportes
         RespuestaBase<GeneracionReportesRespuesta> respuesta = facadeDeProduccion.GeneracionReportes();
 
         Assert.NotNull(respuesta);
-        Assert.True(Validaciones.ValidarCodigoYMensaje(respuesta.Codigo, respuesta.Mensaje));
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
     }
 }

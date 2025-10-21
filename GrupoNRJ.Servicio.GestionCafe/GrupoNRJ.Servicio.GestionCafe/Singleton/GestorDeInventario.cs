@@ -272,7 +272,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// Obtener alertas de productos bajos.
         /// </summary>
         /// <returns>Listado de nuevas alertas.</returns>
-        internal RespuestaBase<List<ObtenerAlertasRespuesta>> ObtenerAlertas()
+        public RespuestaBase<List<ObtenerAlertasRespuesta>> ObtenerAlertas()
         {
             RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
             try
@@ -313,7 +313,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
         /// </summary>
         /// <param name="solicitud">Solicitud de información de producto.</param>
         /// <returns>Respuesta de modificación.</returns>
-        internal RespuestaBase<ObtenerInfoProductoRespuesta> ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
+        public RespuestaBase<ObtenerInfoProductoRespuesta> ObtenerInfoProducto(ObtenerInfoProductoSolicitud solicitud)
         {
             RespuestaBase<ObtenerInfoProductoRespuesta> respuesta = new();
             try

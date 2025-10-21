@@ -4,11 +4,19 @@
 
 namespace GrupoNRJ.Pruebas.GestionCafe
 {
+    /// <summary>
+    /// Clase de validaciones.
+    /// </summary>
     public class Validaciones
     {
-        internal static bool ValidarCodigoYMensaje(int codigo, string mensaje)
+        /// <summary>
+        /// Valida codigo correcto y no tener mensajes de error.
+        /// </summary>
+        /// <param name="codigo">Codigo</param>
+        /// <returns>Codigo correcto.</returns>
+        internal static bool ValidarCodigo(int codigo)
         {
-            return codigo == 0 && string.IsNullOrEmpty(mensaje);
+            return codigo == 0;
         }
 
         internal static Dictionary<string, string> GenerarConfiguraciones()

@@ -15,8 +15,6 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     [Route("api/[controller]")]
     public class PlanificacionController : ControllerBase
     {
-        private readonly EjecutarSP sp;
-
         /// <summary>
         /// Configuración.
         /// </summary>
@@ -27,9 +25,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         /// </summary>
         /// <param name="sp">Ejecutar Sp.</param>
         /// <param name="configuration">Objeto de configuración.</param>
-        public PlanificacionController(EjecutarSP sp, IConfiguration configuration)
+        public PlanificacionController(IConfiguration configuration)
         {
-            this.sp = sp;
             this.configuration = configuration;
         }
 

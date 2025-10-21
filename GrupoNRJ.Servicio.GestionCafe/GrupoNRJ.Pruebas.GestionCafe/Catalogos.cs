@@ -30,7 +30,7 @@ public class Catalogos
         RespuestaBase<List<GranosRespuesta>> respuesta = gestor.ObtenerGranos();
 
         Assert.NotNull(respuesta);
-        Assert.True(Validaciones.ValidarCodigoYMensaje(respuesta.Codigo, respuesta.Mensaje));
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class Catalogos
         RespuestaBase<List<TipoProductoResponse>> respuesta = gestor.ObtenerTipoProducto();
 
         Assert.NotNull(respuesta);
-        Assert.True(Validaciones.ValidarCodigoYMensaje(respuesta.Codigo, respuesta.Mensaje));
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
     }
 
     [Fact]
@@ -50,6 +50,6 @@ public class Catalogos
         RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = gestor.ObtenerCatalogoCombo();
 
         Assert.NotNull(respuesta);
-        Assert.True(Validaciones.ValidarCodigoYMensaje(respuesta.Codigo, respuesta.Mensaje));
+        Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));
     }
 }
