@@ -32,7 +32,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         /// Obtener el avance de los lotes.
         /// </summary>
         /// <returns>Respuesta de lotes.</returns>
-        [HttpGet("reportes/ObtenerReportes")]
+        [HttpGet("ObtenerReportes")]
         public ActionResult GetAvanceLotes()
         {
             FacadeDeProduccion facadeDeProduccion = new(this.configuration);

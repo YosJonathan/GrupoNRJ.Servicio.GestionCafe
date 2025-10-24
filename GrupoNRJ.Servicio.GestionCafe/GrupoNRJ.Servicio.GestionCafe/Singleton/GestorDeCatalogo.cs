@@ -188,5 +188,81 @@ namespace GrupoNRJ.Servicio.GestionCafe.Singleton
 
             return respuesta;
         }
+
+        /// <summary>
+        /// Obtener un estado de planificación.
+        /// </summary>
+        /// <returns>Estado de planificación.</returns>
+        public RespuestaBase<List<CatalogoRespuesta>> ObtenerEstadoPlanificacion()
+        {
+            RespuestaBase<List<CatalogoRespuesta>> respuesta = new();
+            try
+            {
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = new();
+
+                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerEstadoLote", parametros);
+                if (resultado != null)
+                {
+                    List<CatalogoRespuesta> lista = new();
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        lista.Add(new CatalogoRespuesta
+                        {
+                            IdCatalogo = int.Parse(dr["ID"].ToString() ?? "0"),
+                            Nombre = dr["NOMBRE"].ToString() ?? string.Empty,
+                        });
+                    }
+
+                    respuesta.Datos = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+                this.bitacora.GuardarError(ex.ToString(), new { });
+            }
+
+            return respuesta;
+        }
+
+        /// <summary>
+        /// Obtener los lotes de planificación.
+        /// </summary>
+        /// <returns>Lotes de planificación.</returns>
+        public RespuestaBase<List<CatalogoRespuesta>> ObtenerLotePlanificacion()
+        {
+            RespuestaBase<List<CatalogoRespuesta>> respuesta = new();
+            try
+            {
+                DataTable resultado = new();
+                Dictionary<string, object> parametros = new();
+
+                resultado = this.ejecutarSP.ExecuteStoredProcedure("SP_ObtenerLotes", parametros);
+                if (resultado != null)
+                {
+                    List<CatalogoRespuesta> lista = new();
+                    foreach (DataRow dr in resultado.Rows)
+                    {
+                        lista.Add(new CatalogoRespuesta
+                        {
+                            IdCatalogo = int.Parse(dr["ID"].ToString() ?? "0"),
+                            Nombre = dr["Nombre"].ToString() ?? string.Empty,
+                        });
+                    }
+
+                    respuesta.Datos = lista;
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = 999;
+                respuesta.Mensaje = ex.ToString();
+                this.bitacora.GuardarError(ex.ToString(), new { });
+            }
+
+            return respuesta;
+        }
     }
 }

@@ -61,8 +61,8 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         /// </summary>
         /// <param name="solicitud">Solicitud de planificación.</param>
         /// <returns>Información de planificación./returns>
-        [HttpGet("planificacion/id")]
-        public ActionResult GetPlanificacionLote([FromQuery] ObtenerPlanificacionLoteSolicitud solicitud)
+        [HttpPost("planificacion/id")]
+        public ActionResult GetPlanificacionLote([FromBody] ObtenerPlanificacionLoteSolicitud solicitud)
         {
             var gestor = GestorDePlanificacion.GetInstance(this.configuration);
             RespuestaBase<List<ObtenerPlanificacionRespuesta>> respuesta = gestor.ObtenerLotesPlanificacion(solicitud);
@@ -75,7 +75,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         /// </summary>
         /// <param name="solicitud">Solicitud de planificación.</param>
         /// <returns>Respuesta de ingreso de planificación.</returns>
-        [HttpPost("planificacion/nueva")]
+        [HttpPost("nueva")]
         public ActionResult PostCrearPlanificacion([FromBody] PlanificacionSolicitud solicitud)
         {
             var gestor = GestorDePlanificacion.GetInstance(this.configuration);
@@ -89,7 +89,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         /// </summary>
         /// <param name="solicitud">Solicitud para actualizar.</param>
         /// <returns>Respuesta para actualizar.</returns>
-        [HttpPost("planificacion/actualizar")]
+        [HttpPost("actualizar")]
         public ActionResult PostActualizarPlanificacion([FromBody] PlanificacionSolicitud solicitud)
         {
             var gestor = GestorDePlanificacion.GetInstance(this.configuration);

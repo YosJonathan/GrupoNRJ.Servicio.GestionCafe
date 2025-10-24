@@ -65,5 +65,30 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             RespuestaBase<ListadoCatalogoProductosRespuesta> respuesta = gestor.ObtenerCatalogoCombo();
             return this.Ok(respuesta);
         }
+
+        /// <summary>
+        /// Obtiene el estado de planificacion.
+        /// </summary>
+        /// <returns>Catalogo el estado de planificacion.</returns>
+        [HttpGet("obtenerEstado")]
+        public IActionResult ObtenerEstado()
+        {
+            var gestor = GestorDeCatalogo.GetInstance(this.configuration);
+            RespuestaBase<List<CatalogoRespuesta>> respuesta = gestor.ObtenerEstadoPlanificacion();
+            return this.Ok(respuesta);
+        }
+
+
+        /// <summary>
+        /// Obtiene el lote de planificacion.
+        /// </summary>
+        /// <returns>Catalogo el estado de planificacion.</returns>
+        [HttpGet("obtenerLote")]
+        public IActionResult ObtenerLote()
+        {
+            var gestor = GestorDeCatalogo.GetInstance(this.configuration);
+            RespuestaBase<List<CatalogoRespuesta>> respuesta = gestor.ObtenerLotePlanificacion();
+            return this.Ok(respuesta);
+        }
     }
 }
