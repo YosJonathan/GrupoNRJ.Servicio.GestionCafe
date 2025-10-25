@@ -118,7 +118,6 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         [HttpPost("ObtenerAlertas")]
         public IActionResult ObtenerAlertas()
         {
-
             RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
             ServicioInventario servicio = new(this.configuration);
             servicio.Attach(new NotificadorAPI());

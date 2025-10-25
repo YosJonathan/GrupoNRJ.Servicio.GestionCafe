@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GrupoNRJ.Modelos.GestionCafe" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.21" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
@@ -24,12 +25,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GrupoNRJ.Modelos.GestionCafe">
-      <HintPath>..\..\..\GrupoNRJ.Modelos.GestionCafe\GrupoNRJ.Modelos.GestionCafe\bin\Debug\net8.0\GrupoNRJ.Modelos.GestionCafe.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
