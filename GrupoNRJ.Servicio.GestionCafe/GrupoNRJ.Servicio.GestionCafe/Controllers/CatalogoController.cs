@@ -7,11 +7,13 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe;
     using GrupoNRJ.Modelos.GestionCafe.Respuestas;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
     /// Controlador de catalogo.
     /// </summary>
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CatalogoController : ControllerBase
@@ -77,7 +79,6 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
             RespuestaBase<List<CatalogoRespuesta>> respuesta = gestor.ObtenerEstadoPlanificacion();
             return this.Ok(respuesta);
         }
-
 
         /// <summary>
         /// Obtiene el lote de planificacion.

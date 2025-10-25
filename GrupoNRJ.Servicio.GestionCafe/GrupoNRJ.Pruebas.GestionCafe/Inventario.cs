@@ -6,6 +6,7 @@ using GrupoNRJ.Modelos.GestionCafe;
 using GrupoNRJ.Modelos.GestionCafe.Respuestas;
 using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
 using GrupoNRJ.Servicio.GestionCafe.Facade;
+using GrupoNRJ.Servicio.GestionCafe.Observer;
 using GrupoNRJ.Servicio.GestionCafe.Singleton;
 using Microsoft.Extensions.Configuration;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -109,8 +110,11 @@ public class Inventario
     [Fact]
     public void ObtenerAlertas()
     {
-        var gestor = GestorDeInventario.GetInstance(this.configuration);
-        RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = gestor.ObtenerAlertas();
+        RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
+        ServicioInventario servicio = new(this.configuration);
+        servicio.Attach(new NotificadorAPI());
+        servicio.Attach(new NotificadorConsola());
+        respuesta = servicio.VerificarProductosBajos();
 
         Assert.NotNull(respuesta);
         Assert.True(Validaciones.ValidarCodigo(respuesta.Codigo));

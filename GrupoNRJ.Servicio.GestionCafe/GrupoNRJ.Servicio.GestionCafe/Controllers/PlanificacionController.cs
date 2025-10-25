@@ -9,10 +9,12 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using GrupoNRJ.Servicio.GestionCafe.Factory;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PlanificacionController : ControllerBase
     {
         /// <summary>

@@ -9,6 +9,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using GrupoNRJ.Servicio.GestionCafe.Abstract_Factory;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -16,6 +17,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ComboController : ControllerBase
     {
         /// <summary>

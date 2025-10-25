@@ -9,6 +9,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
     using GrupoNRJ.Servicio.GestionCafe.Observer;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -16,6 +17,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class InventarioController : ControllerBase
     {
         /// <summary>

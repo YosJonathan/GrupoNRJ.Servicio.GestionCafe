@@ -8,11 +8,13 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe;
     using GrupoNRJ.Modelos.GestionCafe.Respuestas;
     using GrupoNRJ.Servicio.GestionCafe.Facade;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
     /// Controlador para informes.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class InformeController : Controller
