@@ -7,6 +7,7 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
     using GrupoNRJ.Modelos.GestionCafe;
     using GrupoNRJ.Modelos.GestionCafe.Respuestas;
     using GrupoNRJ.Modelos.GestionCafe.Solicitudes;
+    using GrupoNRJ.Servicio.GestionCafe.Observer;
     using GrupoNRJ.Servicio.GestionCafe.Singleton;
     using Microsoft.AspNetCore.Mvc;
 
@@ -115,8 +116,12 @@ namespace GrupoNRJ.Servicio.GestionCafe.Controllers
         [HttpPost("ObtenerAlertas")]
         public IActionResult ObtenerAlertas()
         {
-            var gestor = GestorDeInventario.GetInstance(this.configuration);
-            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = gestor.ObtenerAlertas();
+
+            RespuestaBase<List<ObtenerAlertasRespuesta>> respuesta = new();
+            ServicioInventario servicio = new(this.configuration);
+            servicio.Attach(new NotificadorAPI());
+            servicio.Attach(new NotificadorConsola());
+            respuesta = servicio.VerificarProductosBajos();
             return this.Ok(respuesta);
         }
 
